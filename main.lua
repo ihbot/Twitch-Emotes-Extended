@@ -67,4 +67,5 @@ RegisterEmote('PantsGrab', 'PantsGrab.tga')
 RegisterEmote('peepoFlushed', 'peepoFlushed.tga')
 
 RegisterAnimatedEmote('HUHH', 'HUHH.tga', 47, 32, 2048, 20)
+RegisterAnimatedEmote('SNIFFA', 'SNIFFA.tga', 40, 32, 2048, 25)
 RegisterAnimatedEmote('yeppers', 'yeppers.tga', 2, 32, 64, 12)
