@@ -1,0 +1,3 @@
+TwitchEmotesExtended = {
+    ["HUHH"] = "HUHH"
+}
