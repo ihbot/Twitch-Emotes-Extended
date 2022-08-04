@@ -1,0 +1,7 @@
+## Interface: 20504
+## Title: TwitchEmotesExtended
+## Author: Shiftlordx - Grobbulus (US)
+## Version: 0.0.2
+## SavedVariables: TwitchEmotesExtendedSettings
+
+main.lua
