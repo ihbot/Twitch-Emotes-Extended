@@ -1,0 +1,39 @@
+# GitHub Action for processing new images into emotes
+
+name: 'Image Processing'
+
+on:
+  workflow_dispatch:
+  # Re-add this when we want automation enabled
+  # push:
+  #   branches:
+  #     - main
+
+jobs:
+  image_processing:
+    runs-on:
+      ubuntu-latest
+    
+    steps:
+      - name: Install ImageMagick and Git
+        run: |
+          sudo apt-get update -y
+          sudo apt install imagemagick -y
+          sudo apt install git
+      
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          ref: main
+      
+      - name: Run Image Processing Script
+        run: |
+          bash image_processing.sh
+      
+      - name: Commit and Push Changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add . --ignore-errors
+          git commit -m 'Added new emote - $FILE'
+          git push
