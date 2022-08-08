@@ -61,11 +61,76 @@ TwitchEmotesAnimator_UpdateEmoteInFontString = function(fontstring, widthOverrid
     end
 end
 
+ -- Have to rerun this code manually because..
+ -- TwitchEmotes blocks future calls to Emoticons_SetAutoComplete
+ function FixAutocomplete()
+    AllTwitchEmoteNames = {}
+
+    local i = 0;
+    for k, v in pairs(TwitchEmotes_defaultpack) do
+        --Some values in emoticons don't have a corresponding key in TwitchEmotes_defaultpack
+        --we need to filter these out because we don't have an emote to show for these
+        -- if TwitchEmotes_defaultpack[v] ~= nil then
+            local excluded = false;
+            for j=1, #TwitchEmotes_ExcludedSuggestions do
+                if k == TwitchEmotes_ExcludedSuggestions[j] then
+                    excluded = true;
+                    break;
+                end
+            end
+
+            if excluded == false then
+                AllTwitchEmoteNames[i] = k;
+                i = i + 1;
+            end
+        -- end
+    end
+
+    --Sort the list alphabetically
+    table.sort(AllTwitchEmoteNames)
+
+    for i=1, NUM_CHAT_WINDOWS do
+        local frame = _G["ChatFrame"..i]
+
+        local editbox = frame.editBox;
+        local suggestionList = AllTwitchEmoteNames;
+        local maxButtonCount = 20;
+
+        local autocompletesettings = {
+            perWord = true,
+            activationChar = ':',
+            closingChar = ':',
+            minChars = 2,
+            fuzzyMatch = true,
+            onSuggestionApplied = function(suggestion)
+                UpdateEmoteStats(suggestion, true, false, false);
+            end,
+            renderSuggestionFN = Emoticons_RenderSuggestionFN,
+            suggestionBiasFN = function(suggestion, text)
+                --Bias the sorting function towards the most autocompleted emotes
+                if TwitchEmoteStatistics[suggestion] ~= nil then
+                    return TwitchEmoteStatistics[suggestion][1] * 5
+                end
+                return 0;
+            end,
+            interceptOnEnterPressed = true,
+            addSpace = true,
+            useTabToConfirm = Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_TAB"],
+            useArrowButtons = true,
+        }
+
+        SetupAutoComplete(editbox, suggestionList, maxButtonCount, autocompletesettings);
+    end
+end
+
 RegisterEmote('BasedRetard', 'BasedRetard.tga')
 RegisterEmote('CluelessClown', 'CluelessClown.tga')
 RegisterEmote('PantsGrab', 'PantsGrab.tga')
 RegisterEmote('peepoFlushed', 'peepoFlushed.tga')
 
+RegisterAnimatedEmote('Gerbing', 'Gerbing.tga', 10, 32, 512, 50)
 RegisterAnimatedEmote('HUHH', 'HUHH.tga', 47, 32, 2048, 20)
 RegisterAnimatedEmote('SNIFFA', 'SNIFFA.tga', 40, 32, 2048, 25)
 RegisterAnimatedEmote('yeppers', 'yeppers.tga', 2, 32, 64, 12)
+
+FixAutocomplete()
